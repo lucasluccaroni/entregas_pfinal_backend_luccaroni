@@ -1,29 +1,16 @@
 [
 	{
-		"id": 1,
-		"title": "Alfajor Terrabussi",
-		"description": "Alfajor bañado en chocolate relleno de DDL.",
-		"price": 400,
-		"thumbnail": "URL/Alfajor",
-		"code": "abc001",
-		"stock": 10
-	},
-	{
-		"id": 2,
-		"title": "Chocolate Aguila ",
-		"description": "Barra de chocolate 70% cacao.",
-		"price": 1200,
-		"thumbnail": "URL/Aguila",
-		"code": "abc002",
-		"stock": 15
-	},
-	{
-		"id": 3,
+		"id": 508,
 		"title": "Gomitas Mogul",
 		"description": "Gomitas de caramelo masticables sabor frutilla.",
 		"price": 300,
-		"thumbnail": "URL/Gomitas Mogul",
+		"thumbnail": [
+			"URL/Gomitas Mogul",
+			"img.jpg"
+		],
 		"code": "abc003",
-		"stock": 20
+		"stock": 20,
+		"status": true,
+		"category": "golosinas"
 	}
 ]

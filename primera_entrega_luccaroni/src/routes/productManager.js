@@ -6,6 +6,7 @@ class ProductManager{
     #products
     #ultimoId = 1
     #path
+    #usedIds = new Set()
 
     constructor(pathToUse){
         this.#path = pathToUse
@@ -33,7 +34,7 @@ class ProductManager{
 
 
     // Actualizar el archivo
-    async #updateFile(){
+    async updateFile(){
         await fs.promises.writeFile(this.#path, JSON.stringify(this.#products, null, "\t"))
     }
 
@@ -53,7 +54,7 @@ class ProductManager{
             const productData = {...this.#products[exsitingProductIndex], ...updatedProduct}
             this.#products[exsitingProductIndex] = productData
 
-            await this.#updateFile()
+            await this.updateFile()
 
         }catch(err){
             console.log(`Error actualizando el producto => ${err}`)
@@ -77,7 +78,7 @@ class ProductManager{
             const arrayWithoutDeletedProduct = this.#products.filter(product => product.id !== productId)
             this.#products = arrayWithoutDeletedProduct
     
-            await this.#updateFile()
+            await this.updateFile()
             console.log(`El producto con ID:${productId} fue eliminado exitosamente.`)
 
         }catch(err){
@@ -101,6 +102,18 @@ class ProductManager{
     }
 
 
+    //Creacopm de ID aleatorio
+    #getRandomId(){
+        let randomId
+        do {
+            randomId = parseInt(Math.random()*1000)
+        } while (this.#usedIds.has(randomId))
+
+        this.#usedIds.add(randomId)
+        return randomId
+    }
+
+
     // Metodo de busqueda por ID
     getProductById(idABuscar){
         const busqueda = this.#products.find((product)=>{
@@ -115,11 +128,11 @@ class ProductManager{
 
     
     // Método para agregar un nuevo producto
-    async addProduct(title, description, price, thumbnail, code, stock){
+    async addProduct(title, description, price, thumbnail, code, stock, status, category){
 
         // Validacion de condiciones (ninguna clave vacia o en blanco)
-        if(!title || !description || !price || !thumbnail || !code || !stock || title.trim() === "" || description.trim() === "" || price < 1 || thumbnail.trim() === "" || code.trim() === "" || stock < 1 ){
-            console.log("ERROR EN LA CARGA DEL PRODUCTO. Todos los datos son obligatorios y no pueden estar en blanco. El precio y el stock deben ser mayores que 1.");
+        if(!title || !description || !price || !code || !stock || title.trim() === "" || description.trim() === "" || price < 1 || code.trim() === "" || stock < 1  || !status || !category){
+            console.log("ERROR EN LA CARGA DEL PRODUCTO. Todos los datos son obligatorios y no pueden estar en blanco. El precio y el stock deben ser mayores que 1. 'status' debe ser boolean.");
             return
         }
 
@@ -132,18 +145,22 @@ class ProductManager{
 
         // Creación del nuevo producto
         const newProduct = {
-            id: this.#getNuevoId(),
+            id: this.#getRandomId(),
             title,
             description,
             price,
             thumbnail,
             code,
-            stock
+            stock,
+            status: true,
+            category
         }
 
         // Agregar el nuevo producto
         this.#products.push(newProduct)
-        await this.#updateFile()
+        await this.updateFile()
+
+        return newProduct
     }
 }
 
