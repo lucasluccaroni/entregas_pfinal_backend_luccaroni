@@ -1,3 +1,5 @@
+//PRODUCT MANAGER IMPORTADO DEL DESAFIO ANTERIOR PARA CONTINUIDAD DE TRABAJO
+
 const fs = require("fs")
 const filename = `${__dirname}/../assets/products.json`
 
