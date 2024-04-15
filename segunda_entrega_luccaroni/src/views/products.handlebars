@@ -1,0 +1,16 @@
+<div> PRODUCTS </div>
+<div> Pagina actual: {{products.page}} </div>
+
+<ul>
+    {{#each products.docs}}
+    <li> {{title}} - ${{price}} </li>
+    {{/each}}
+</ul>
+
+{{#if products.hasPrevPage}}
+<a href="/products?page={{products.prevPage}}"> Anterior </a>
+{{/if}}
+
+{{#if products.hasNextPage}}
+<a href="/products?page={{products.nextPage}}"> Siguiente </a>
+{{/if}}
