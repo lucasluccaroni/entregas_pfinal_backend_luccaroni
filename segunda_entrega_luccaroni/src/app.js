@@ -6,12 +6,17 @@ const app = express()
 
 const ProductManager = require("./dao/dbManagers/productManager")
 
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json())
+
 app.engine("handlebars", handlebars.engine())
 app.set("views" , `${__dirname}/views`)
 app.set("view engine", "handlebars")
 
 app.use("/api/products", require("./routes/products.router"))
 app.use("/api/cart", require("./routes/cart.router"))
+
+
 
 const main = async ()=>{
 

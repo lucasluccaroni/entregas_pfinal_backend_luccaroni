@@ -1,0 +1,32 @@
+[
+	{
+		"title": "Alfajor Havanna",
+		"description": "Alfajor sabor chocolate",
+		"price": 1000,
+		"thumbnail": "havanna.jpg",
+		"code": "abc015",
+		"stock": 100,
+		"status": true,
+		"category": "alfajores"
+	},
+	{
+		"title": "Macritas",
+		"description": "Snack en forma de triangulo",
+		"price": 1200,
+		"thumbnail": "macritas.jpg",
+		"code": "abc016",
+		"stock": 200,
+		"status": true,
+		"category": "snacks"
+	},
+    {
+        "title": "Coca-Cola 500ml",
+        "description": "Botella de gaseosa sabor cola, tamaño de 500ml",
+        "price": 800,
+        "thumbnail": "Coca-Cola.jpg",
+        "code": "abc066",
+        "stock": 150,
+        "status": true,
+        "category": "gaseosas"
+    }
+]
