@@ -1,18 +1,18 @@
-<div> PRODUCTS </div>
-<div> Pagina actual: {{products.page}} </div>
-<div> Paginas totales: {{products.totalPages}} </div>
+<h3> PRODUCTS </h3>
+<div> Current Page: {{products.page}} </div>
+<div> Total pages: {{products.totalPages}} </div>
 
 <ul>
     {{#each products.docs}}
-    <li> Titulo: {{title}} -- Desc: {{description}} -- ${{price}} -- Stock: {{stock}}u. -- Categoria: {{category}} </li>
+    <li> Title: {{title}} -- Desc: {{description}} -- ${{price}} -- Stock: {{stock}}u. -- Category: {{category}} </li>
     {{/each}}
 </ul>
 
 {{#if products.hasPrevPage}}
-<a href="/api/products?page={{products.prevPage}}&limit={{products.limit}}"> Anterior </a>
+<a href="/api/products?page={{products.prevPage}}&limit={{products.limit}}"> Prev  </a>
 {{/if}}
 
 {{#if products.hasNextPage}}
-<a href="/api/products?page={{products.nextPage}}&limit={{products.limit}}"> Siguiente </a>
+<a href="/api/products?page={{products.nextPage}}&limit={{products.limit}}"> Next </a>
 {{/if}}
 
