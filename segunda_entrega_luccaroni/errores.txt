@@ -1,0 +1,9 @@
+ERRORES QUE NO PUDE RESOLVER
+- El populate en el CartModel para aplicarlo en el getCartById(cid)
+
+- Al agregar un producto + cantidad a un carrito, se agrega la cantidad pero el ID del producto no se guarda, sino que se genera un ObjectID() nuevo. Esto imposibilita realizar busquedas por find() en los distintos métodos del cartManager() para realizar comprobaciones del estilo:
+* "verificar si el producto ya se encuentra en el carrito para sumarle 1".
+* "buscar el producto a actualizar en el carrito para modificarle la cantidad".
+* "borrar un producto especifico del carrito seleccionado".
+
+- vista en handlebars del carrito: las propiedades estan dentro de un objeto de un array y no puedo acceder a ellas para renderizarlas en "cart.handlebars"

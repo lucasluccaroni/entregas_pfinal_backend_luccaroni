@@ -20,7 +20,9 @@ class CartManager {
 
     async getCartById(id){
         try{
-            const cartToSend = await CartModel.findOne({_id: id}).populate("products._id")
+            const cartToSend = await CartModel.findOne({_id: id})/* .populate
+            ("products.product") */
+            console.log("Carrito a enviar => ", cartToSend)
 
             if(!cartToSend){
                 console.log("Cart not Found")
@@ -105,12 +107,13 @@ class CartManager {
             const pid = product.productId
             
             const cartToAdd = await this.getCartById(cid)
-            console.log("CARRITO: ", cartToAdd)
+            console.log("Carrito a llenar: ", cartToAdd)
             if(!cartToAdd) { 
                 throw new Error (`Cart with ID: ${cid} was not found.`)
             }
 
             const productToAdd = await ProductModel.findOne({_id: pid})
+            console.log("Producto a agregar =>", productToAdd)
             if(!productToAdd) {
                 throw new Error (`Product with ID: ${pid} was not found.`)
             }
@@ -118,7 +121,7 @@ class CartManager {
             // No puedo hacer funcionar el .find()
             //verificacion de si el producto ya está en el carrito
             /* const productVerification = cartToAdd.products.find((product) => {
-                return (product._id).toString() === p.id
+                return (product._id).toString() === pid
             }) */
 
             // si el producto está, le sumo una unidad
@@ -128,11 +131,11 @@ class CartManager {
                     {_id: cid, "products._id": pid}, {$set: {"products.$.quantity": sumQuantity}}
                 )
                 return updateCart
-            }*/
+            } */
 
             // si el producto no está, lo agrego al carrito
             const cartUpdate = await CartModel.updateOne(
-                { _id: cid }, {$push: { products: { _id: product.pid, quantity: product.quantity } } }
+                { _id: cid }, {$set: { products: { _id: product.pid, quantity: product.quantity } } }
             )
             return cartUpdate
         }   

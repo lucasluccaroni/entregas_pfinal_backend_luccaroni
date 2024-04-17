@@ -5,6 +5,7 @@ const schema = new mongoose.Schema({
     products: [{
         product: {
             type: mongoose.Schema.Types.ObjectId,
+            required: true,
             ref: "Product"
         },
         quantity: {
@@ -12,6 +13,10 @@ const schema = new mongoose.Schema({
             default: 1
         }
     }]
+})
+
+schema.pre("findOne", function () {
+    this.populate("products.product")
 })
 
 schema.virtual("id").get(function () {
