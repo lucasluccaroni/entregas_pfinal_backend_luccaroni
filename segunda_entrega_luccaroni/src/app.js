@@ -40,7 +40,7 @@ const main = async ()=>{
 
     // creacion de nueva instancia cartManager
     const cartManager = new CartManager()
-    await cartManager.readCartFromFile()
+    await cartManager.initialize()
     app.set("cartManager", cartManager)
 
     app.listen(1404, () =>{
