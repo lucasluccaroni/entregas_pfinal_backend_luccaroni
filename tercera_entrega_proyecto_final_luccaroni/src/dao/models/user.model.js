@@ -16,6 +16,9 @@ const schema = new mongoose.Schema({
     },
     password: {
         type: String,
+    },
+    email: {
+        type: String,
         required: true
     },
     cart: {

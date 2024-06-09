@@ -5,13 +5,30 @@ class ProductsController {
         this.service = service
     }
 
-    async getProducts(_, res) {
+    async getProducts(req, res) {
         try {
-            const result = await this.service.getProducts()
-            res.sendSuccess(result)
+            // Queries
+            const limit = req.query.limit || 10
+            const page = req.query.page || 1
+            const sort = req.query.sort // asc o desc
+
+            // Category y stock
+            let query = {}
+            if(req.query.category) {
+                query.category = req.query.category
+
+            } else if (req.query.stock) {
+                query.stock = req.query.stock
+            }
+
+            const products = await this.service.getProducts(query, sort, limit, page)
+
+            return products
         }
         catch (err) {
+            console.log(err)
             res.sendError(err.message)
+
         }
 
     }
@@ -21,7 +38,7 @@ class ProductsController {
             const id = req.params.pid
             const product = await this.service.getProductById(id)
 
-            res.sendSuccess(product)
+            return product
         }
         catch (err) {
             console.log("CATCH EN CONTROLLER - getProductById => ", err)

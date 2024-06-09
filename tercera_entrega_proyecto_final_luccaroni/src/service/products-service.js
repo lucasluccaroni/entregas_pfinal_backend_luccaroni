@@ -1,16 +1,42 @@
 // Service - Repository
+const { ProductsDTO } = require("../dao/dtos/products.dto")
+const ProductModel = require("../dao/models/product.model")
 
 class ProductsService {
     constructor(dao) {
         this.dao = dao
     }
 
-    async getProducts() {
+    async getProducts(query, sort, limit, page) {
 
-        const products = await this.dao.getProducts()
+        let products = await this.dao.getProducts()
         if (!products) {
             throw new Error("Someting went wrong!")
         }
+
+
+        // Paginacion para enviar al controller
+        products = await ProductModel.paginate(
+            query,
+            {
+                sort: sort && { price: sort },
+                limit,
+                page,
+                lean: true
+            }
+        )
+        console.log("PRODUCTS DESPUES DE PAGINATE => ", products)
+
+        // Transformacion de productos usando DTO
+        let productsTransformed = await products.docs.map(p => {
+            const dto = new ProductsDTO(p)
+            const transformation = dto.transform()
+            return transformation
+        })
+        // console.log("PRODUCTS DTO",productsTransformed)
+        products.docs = productsTransformed
+        // console.log("PRODUCTS PAGINATE => ", products)
+
 
         return products
     }
@@ -20,13 +46,17 @@ class ProductsService {
         const product = await this.dao.getProductById(id)
         console.log("RESPUESTA PRODUCT DAO => ", product)
         if (product === false) {
-            throw new Error("Not found!")
+            throw new Error("Product not found!")
 
         } else if (product === null) {
             throw new Error("Invalid caracters")
         }
 
-        return product
+        // Transformacion de producto usando DTO
+        const dto = new ProductsDTO(product)
+        const productTransformed = dto.transform()
+        //console.log(productTransformed)
+        return productTransformed
     }
 
     async addProduct(productData) {
