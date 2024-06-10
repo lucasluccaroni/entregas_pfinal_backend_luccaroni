@@ -50,7 +50,7 @@ module.exports = () => {
     // PROFILE
     router.get("/profile", userIsLoggedIn, async (req, res) => {
 
-        console.log("Info de session en Profile: ", req.session.user)
+        console.log("Info de session en Profile: ", req.session)
         const idFromSession = req.session.user.id
 
         // Si tiene _id: 1 (porque es admin), importo los datos de admin y los renderizo.

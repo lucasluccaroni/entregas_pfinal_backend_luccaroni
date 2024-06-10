@@ -1,5 +1,5 @@
 const { Router } = require("express")
-const {userShouldBeAdmin, userShouldNotBeAdmin } = require("../middlewares/auth.middleware")
+const {userShouldBeAdmin, userIsLoggedIn } = require("../middlewares/auth.middleware")
 
 const { ProductsDAO } = require("../dao/mongo/products.dao")
 const dao = new ProductsDAO()
@@ -24,8 +24,8 @@ module.exports = ()  => {
         })
     })
     
-    router.get("/:pid", async (req, res) => {
-        console.log("Info de session en PRODUCT BY ID: ", req.session.user)
+    router.get("/:pid", userIsLoggedIn, async (req, res) => {
+        // console.log("Info de session en PRODUCT BY ID: ", req.session)
 
         const product = await controller.getProductById(req, res)
         
@@ -35,17 +35,17 @@ module.exports = ()  => {
         })
     })
     
-    router.post("/", userShouldBeAdmin, (req, res) => {
+    router.post("/", userIsLoggedIn, userShouldBeAdmin, (req, res) => {
         controller.addProduct(req, res)
     })
 
-    router.put("/:pid", /* userShouldBeAdmin, */ (req, res) => {
+    router.put("/:pid", userIsLoggedIn, userShouldBeAdmin, (req, res) => {
         console.log("Info de session en UPDATE: ", req.session.user)
         
         controller.updateProduct(req, res)
     })
 
-    router.delete("/:pid", userShouldBeAdmin, (req, res) => {
+    router.delete("/:pid", userIsLoggedIn, userShouldBeAdmin, (req, res) => {
         controller.deleteProduct(req, res)
     })
 
