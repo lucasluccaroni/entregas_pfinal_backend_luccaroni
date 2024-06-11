@@ -46,12 +46,14 @@ class CartsController {
             const cartId = req.params.cid
             const productId = req.params.pid
             const { quantity } = req.body
+            const userInfo = req.session.user
 
+            console.log("INFO DEL USER EN AddProduct CONTROLLER => ", userInfo)
             console.log("PRODUCT QUANTITY CART CONTROLLER => ", quantity)
             console.log("CART ID CONTROLLER => ", cartId)
             console.log("PRODUCT ID CONTROLLER => ", productId)
 
-            const result = await this.service.addProductToExistingCart(cartId, productId, quantity)
+            const result = await this.service.addProductToExistingCart(cartId, productId, quantity, userInfo)
 
             res.sendSuccess(result)
         }
@@ -115,6 +117,21 @@ class CartsController {
             res.sendSuccess(result)
         }
         catch (err) {
+            res.sendError(err.message)
+        }
+    }
+
+    async purchaseCart(req, res) {
+        try{
+            const userInfo = req.session.user
+            console.log("INFO DEL USER EN purchaseCart CONTROLLER => ", userInfo)
+
+            const cartId = req.params.cid
+            const result = await this.service.purchaseCart(cartId, userInfo)            
+            res.sendSuccess(result)
+        }
+        catch(err){
+            console.log("ERROR EN CONTROLLER - purchaseCart => ", err)
             res.sendError(err.message)
         }
     }

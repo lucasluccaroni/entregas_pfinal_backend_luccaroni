@@ -1,4 +1,4 @@
-class SessionsController {
+class UsersController {
     constructor(service) {
         this.service = service
     }
@@ -38,4 +38,4 @@ class SessionsController {
         }
 }
 
-module.exports = { SessionsController }
+module.exports = { UsersController }

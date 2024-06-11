@@ -52,5 +52,9 @@ module.exports = () => {
         controller.deleteCart(req, res)
     })
 
+    router.post("/:cid/purchase", userIsLoggedIn, (req, res) => {
+        controller.purchaseCart(req, res)
+    })
+
     return router
 }

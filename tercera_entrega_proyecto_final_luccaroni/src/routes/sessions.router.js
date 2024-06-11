@@ -5,13 +5,11 @@ const { userIsLoggedIn, adminAuth } = require("../middlewares/auth.middleware")
 const { UsersDAO } = require("../dao/mongo/users.dao")
 const dao = new UsersDAO()
 
-const { SessionsService } = require("../service/sessions-service")
-const service = new SessionsService(dao)
+const { UsersService } = require("../service/users-service")
+const service = new UsersService(dao)
 
-const { SessionsController } = require("../controllers/sessions.controller")
-const controller = new SessionsController(service)
-
-
+const { UsersController } = require("../controllers/users.controller")
+const controller = new UsersController(service)
 
 
 module.exports = () => {

@@ -1,6 +1,6 @@
 const { hashPassword } = require("../utils/hashing")
 
-class SessionsService {
+class UsersService {
     constructor(dao) {
         this.dao = dao
     }
@@ -39,4 +39,4 @@ class SessionsService {
     }
 }
 
-module.exports = { SessionsService }
+module.exports = { UsersService }
