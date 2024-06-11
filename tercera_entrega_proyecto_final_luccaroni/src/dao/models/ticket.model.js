@@ -8,7 +8,7 @@ const schema = new mongoose.Schema({
     },
     purchase_datetime:{
         type: Date,
-        default: Date.now, // Type correcto?
+        default: Date.now,
         required: true
     },
     amount: {

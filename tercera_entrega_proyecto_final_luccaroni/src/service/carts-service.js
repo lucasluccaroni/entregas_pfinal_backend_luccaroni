@@ -82,15 +82,15 @@ class CartsService {
             console.log("CARRITO ENCONTRADO => ", cart)
 
             // Busco el carrito que le corresponde al User cuando se registró
-            const user = await usersService.getUseById(userInfo.id)
+            const user = await usersService.getUserById(userInfo.id)
             console.log("USER ENCONTRADO EN CARTS-SERVICE => ", user)
-            
+
             const userCart = user.cart.toString()
             console.log("USER CART => ", userCart)
-            
+
             // Comparo los carritos. El usuario registrado solo puede añadir carritos al carrito que le corresponde.
             if (userCart !== cart.id) {
-                throw new Error ("This cart isn't yours!")
+                throw new Error("This cart isn't yours!")
             }
 
             // Busco el producto
@@ -111,7 +111,7 @@ class CartsService {
 
                 // Verifico la cantidad actual, la que se quiere ingresar y el stock disponible
                 if (quantity < 0 || quantity > productToAdd.stock) {
-                throw new Error("Wrong quantity")
+                    throw new Error("Wrong quantity")
                 }
 
                 productExistInCart = false
@@ -124,7 +124,7 @@ class CartsService {
 
                 // Verifico la cantidad actual, la que se quiere actualizar y el stock disponible
                 if (found.quantity < 0 || quantity < 0 || quantity > productToAdd.stock) {
-                throw new Error("Wrong quantity")
+                    throw new Error("Wrong quantity")
                 }
 
                 quantity += found.quantity
@@ -144,6 +144,18 @@ class CartsService {
 
         // Busco el carrito
         const cart = await this.getCartById(cartId)
+
+        // Busco el carrito que le corresponde al User cuando se registró
+        const user = await usersService.getUserById(userInfo.id)
+        console.log("USER ENCONTRADO EN CARTS-SERVICE => ", user)
+
+        const userCart = user.cart.toString()
+        console.log("USER CART => ", userCart)
+
+        // Comparo los carritos. El usuario registrado solo puede añadir carritos al carrito que le corresponde.
+        if (userCart !== cart.id) {
+            throw new Error("This cart isn't yours!")
+        }
 
         // Busco el producto
         const productToAdd = await productsService.getProductById(productId)
@@ -186,11 +198,11 @@ class CartsService {
         })
 
         // Si esta, actualizo el carrito quitando ese producto
-        if (found) { 
+        if (found) {
             const deleteProduct = await this.dao.deleteProductFromExistingCart(cartId, productToDelete.id)
             return deleteProduct
 
-        // Si no esta, arrojo un error
+            // Si no esta, arrojo un error
         } else if (!found) {
             throw new Error("Product is not in cart!")
         }
@@ -231,84 +243,45 @@ class CartsService {
 
     async purchaseCart(cartId, userInfo) {
 
-        //! Busco el carrito
+        // Traigo el carrito y el usuario
         const cart = await this.getCartById(cartId)
-        console.log("CART => ", cart)
+        const user = await usersService.getUserById(userInfo.id)
 
-
-        //! Busco el User y el carrito que le corresponde al User cuando se registró
-        const user = await usersService.getUseById(userInfo.id)
-        console.log("USER ENCONTRADO EN PURCHASE => ", user)
-        
-        const userCart = user.cart.toString()
-        console.log("USER CART => ", userCart)
-        
-        //! Comparo los carritos. El usuario registrado solo puede comprar el carrito que le corresponde.
-        if (userCart !== cart.id) {
-            throw new Error ("This cart isn't yours!")
+        // Verifico que el carrito pertenezca al usuario
+        if (user.cart.toString() !== cart.id) {
+            throw new Error("This cart isn't yours!")
         }
 
-        // return carts.map(c => c.toObject()) -- ejemplo de map
+        // Inicializo el total de la compra
+        let totalAmount = 0
 
+        // Itero sobre cada producto en el carrito
+        for (let i = 0; i < cart.products.length; i++) {
+            // Obtengo la cantidad y el ID del producto
+            const quantity = cart.products[i].quantity
+            const productId = cart.products[i].id.toString()
 
-        //! Extraigo la propiedad "quantity" de cada producto en el carrito
-        // const quantitiesOfEachProduct = cart.products.map(p => p.quantity.toString())
-        // const totalQuantity = quantitiesOfEachProduct.reduce((total, number) => total + Number(number), 0)
-        // console.log("TOTAL QUANTITY => ", totalQuantity)
+            // Busca el producto en la base de datos
+            const productToPurchase = await productsService.getProductById(productId)
 
-        const quantityMap = cart.products.map(p => p.quantity.toString())
-        console.log("QUANTITY MAP =>", quantityMap)
-        const quantity = quantityMap[0]
-        console.log("QUANTITY => ", quantity)
+            // Calculo el monto de este producto y lo añado al total
+            const amount = productToPurchase.price * quantity
+            totalAmount += amount
 
+            // Actualizo el stock del producto
+            const remainingStock = productToPurchase.stock - quantity
+            await productsService.updateProduct(productId, { stock: remainingStock })
+        }
 
-        //! Busco el/los productos en la bd
-        // let ids
-        // const productsId = cart.products.map(p => p.id.toString())
-        // for (let i = 0; i < productsId.length; i++){
-        //     ids = productsId[i]    
-        // }
-        // console.log(ids)
-
-        const productIdMap = cart.products.map(p => p.id.toString())
-        console.log("PRODUCT ID MAP =>", productIdMap)
-        const productId = productIdMap[0]
-        console.log("PRODUCT ID => ", productId)
-        const productToPurchase = await productsService.getProductById(productId)
-        console.log("PRODUCTO A COMPRAR => ", productToPurchase)
-
-
-        //! Hago la cuenta = cantidad del carrito * precio del producto
-        const amount = productToPurchase.price * quantity
-        console.log("TOTAL A PAGAR => ", amount)
-
-        
-
-        //! Genero el ticket
+        // Genero el ticket con el total de la compra
         const ticket = await TicketModel.create({
-            code: parseInt(Math.random()*1000),
+            code: parseInt(Math.random() * 1000),
             purchase_datetime: Date.now(),
-            amount,
+            amount: totalAmount,
             purchaser: user.email
         })
 
-
-        //! Actualizo el producto restandole del stock la cantidad comprada
-        const stockRestante = productToPurchase.stock - quantity
-        const updateProduct = await productsService.updateProduct(productId, {stock: stockRestante})
-
         return ticket
-
-        // const idSearch = async (ids) => {
-        //     await ids.forEach((id) => {
-        //         productsService.getProductById(id)
-        //     }) 
-        // }
-        // console.log("ID SEARCH RESULT => ", idSearch(productsId))
-
-        
-
-        // const productToAdd = await productsService.getProductById(productId)
     }
 
 }

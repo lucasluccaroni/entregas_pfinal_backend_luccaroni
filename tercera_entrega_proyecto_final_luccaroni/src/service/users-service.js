@@ -33,7 +33,7 @@ class UsersService {
         }
     }
 
-    async getUseById(id) {
+    async getUserById(id) {
             const user = this.dao.getUserById(id)
             return user
     }
